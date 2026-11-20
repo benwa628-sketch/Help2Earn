@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TulongKonek — Peer Help & Points App (AY 2026–2027)</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface-alt: #f9fafc;
+      --primary: #1d4ed8;
+      --primary-dark: #1e40af;
+      --primary-soft: #eff6ff;
+      --accent: #059669;
+      --accent-soft: #ecfdf5;
+      --warn: #d97706;
+      --warn-soft: #fffbeb;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 48px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 55%, #0284c7 100%);
+      color: #fff;
+      padding: 18px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 4px 16px rgba(29, 78, 216, 0.25);
+    }
+
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.18);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+    .brand p { font-size: 12px; opacity: 0.9; }
+
+    .user-switcher {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .user-switcher label { font-size: 12px; font-weight: 600; }
+
+    select, input, textarea {
+      font-family: inherit;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #fff;
+      color: var(--text);
+      width: 100%;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: 2px solid rgba(29, 78, 216, 0.25);
+      border-color: var(--primary);
+    }
+
+    .user-switcher select {
+      width: auto;
+      min-width: 220px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 22px auto 0;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 880px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .pill-blue { background: var(--primary-soft); color: var(--primary-dark); }
+    .pill-green { background: var(--accent-soft); color: var(--accent); }
+    .pill-amber { background: var(--warn-soft); color: var(--warn); }
+    .pill-red { background: var(--danger-soft); color: var(--danger); }
+
+    .profile-meta {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .profile-meta div span { color: var(--muted); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .stat-value { font-size: 20px; font-weight: 800; margin-top: 2px; }
+    .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-success { background: var(--accent); color: #fff; }
+    .btn-success:hover { background: #047857; }
+    .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { background: var(--surface-alt); }
+    .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+    .btn-full { width: 100%; }
+
+    .form-group { margin-bottom: 11px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #334155; }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .feed-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .feed-filters > * { flex: 1 1 180px; }
+
+    .post-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      background: #fff;
+      margin-bottom: 14px;
+    }
+
+    .post-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .post-author { font-weight: 700; font-size: 14px; }
+    .post-meta { font-size: 12px; color: var(--muted); }
+    .post-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .post-body { font-size: 14px; color: #334155; margin-bottom: 12px; }
+
+    .answers-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    .answer-item {
+      padding: 10px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .answer-item:last-child { margin-bottom: 0; }
+    .answer-item.accepted { border-color: var(--accent); background: #f0fdf4; }
+
+    .answer-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .answer-text { font-size: 13px; color: #1e293b; margin-bottom: 8px; }
+
+    .ledger-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .ledger-item:last-child { border-bottom: none; }
+    .pts-plus { color: var(--accent); font-weight: 700; }
+    .pts-minus { color: var(--danger); font-weight: 700; }
+
+    .toast-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 50;
+      display: grid;
+      gap: 8px;
+      max-width: 360px;
+    }
+
+    .toast {
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+      border-left: 4px solid #38bdf8;
+    }
+
+    .guardrail-list {
+      padding-left: 18px;
+      font-size: 13px;
+      color: #334155;
+      display: grid;
+      gap: 6px;
+    }
+
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); font-size: 13px; }
+  </style>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#1d4ed8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="TulongKonek" />
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-badge">TK</div>
+        <div>
+          <h1>TulongKonek Prototype</h1>
+          <p>Course-Based Peer Help • +5 Patulong / +20 Tutulong • Points-to-Cash</p>
+        </div>
+      </div>
+
+      <div class="user-switcher">
+        <label for="activeUserSelect">Aktibong Account:</label>
+        <select id="activeUserSelect"></select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- LEFT COLUMN: PROFILE, WALLET & REGISTRATION -->
+    <aside>
+      <div class="card">
+        <div class="card-title">
+          <span>Student Profile</span>
+          <span class="pill pill-blue" id="profileCourseBadge">Course</span>
+        </div>
+        <div class="profile-meta" id="profileMeta"></div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Points Balance</div>
+            <div class="stat-value" id="statPoints">0 pts</div>
+            <div class="stat-sub" id="statPhpValue">≈ ₱0.00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Cashout Rate</div>
+            <div class="stat-value">₱0.50</div>
+            <div class="stat-sub">1 pt = ₱0.50 (Min 100 pts)</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cashoutPointsInput">I-convert at I-cashout (Points)</label>
+          <input type="number" id="cashoutPointsInput" min="100" step="10" placeholder="Hal. 100" />
+        </div>
+        <button class="btn btn-success btn-full" id="cashoutBtn">Request Cashout (Demo)</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>Mag-register (AY 2026–2027)</span>
+          <span class="pill pill-amber">Required Fields</span>
+        </div>
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="regName">Full Name</label>
+            <input type="text" id="regName" required placeholder="Hal. Carlo Mendoza" />
+          </div>
+          <div class="form-group">
+            <label for="regSchoolId">School ID (2026-2027 format)</label>
+            <input type="text" id="regSchoolId" required pattern="2026-2027-[A-Za-z0-9-]+" placeholder="Hal. 2026-2027-00142" />
+          </div>
+          <div class="form-group">
+            <label for="regCourse">Course</label>
+            <select id="regCourse" required>
+              <option value="BS Civil Engineering">BS Civil Engineering</option>
+              <option value="BS Computer Science">BS Computer Science</option>
+              <option value="BS Accountancy">BS Accountancy</option>
+              <option value="BS Nursing">BS Nursing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="regSchool">Name of School</label>
+            <input type="text" id="regSchool" required placeholder="Hal. Mapua University" />
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Gumawa ng Account & Lumipat</button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- RIGHT COLUMN: MAIN WORKSPACE -->
+    <section>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="feedTab">Course Peer Help Feed</button>
+        <button class="tab-btn" data-tab="postTab">Magpatulong (+5 pts)</button>
+        <button class="tab-btn" data-tab="walletTab">Points Ledger & Rules</button>
+      </div>
+
+      <!-- TAB 1: FEED -->
+      <div id="feedTab">
+        <div class="card">
+          <div class="card-title">
+            <span>Mga Humihingi ng Tulong sa Parehong Course</span>
+            <span class="pill pill-green" id="matchingCountPill">0 active posts</span>
+          </div>
+
+          <div class="feed-filters">
+            <div>
+              <label for="filterCourse" class="muted" style="display:block; margin-bottom:4px; font-weight:600;">Filter by Course</label>
+              <select id="filterCourse">
+                <option value="MY_COURSE">Aking Course Lang (Cross-School)</option>
+                <option value="ALL">Lahat ng Courses</option>
+                <option value="BS Civil Engineering">BS Civil Engineering</option>
+                <option value="BS Computer Science">BS Computer Science</option>
+                <option value="BS Accountancy">BS Accountancy</option>
+                <option value="BS Nursing">BS Nursing</option>
+              </select>
+            </div>
+            <div>
+              <label for="searchKeyword" class="muted" style="display:block; margin-bottom:4px; font-weight:600;">Maghanap ng Topic / Subject</label>
+              <input type="text" id="searchKeyword" placeholder="Hal. beam, SQL, ledger, dosage..." />
+            </div>
+          </div>
+
+          <div id="postsContainer"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: CREATE REQUEST -->
+      <div id="postTab" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span>Mag-post ng Help Request</span>
+            <span class="pill pill-blue">+5 pts agad sa pag-post</span>
+          </div>
+          <p class="muted" style="margin-bottom:14px;">
+            Mapupunta ang post mo sa mga estudyanteng kapareho mo ng course kahit magkakaibang school. Kapag may sumagot at na-confirm mo ang tamang tulong, makakakuha ang tutulong ng <strong>+20 pts</strong>.
+          </p>
+          <form id="createPostForm">
+            <div class="form-group">
+              <label for="postTitle">Pamagat ng Tanong / Kailangan ng Tulong</label>
+              <input type="text" id="postTitle" required placeholder="Hal. Paano i-check ang shear force sa simply supported beam?" />
+            </div>
+            <div class="form-group">
+              <label for="postBody">Detalye ng Problema o Topic</label>
+              <textarea id="postBody" rows="4" required placeholder="Ilagay ang given values, kung saan ka nalilito, o anong klase ng paliwanag ang kailangan mo..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">I-post ang Request (+5 pts)</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 3: LEDGER & GUARDRAILS -->
+      <div id="walletTab" class="hidden">
+        <div class="card">
+          <div class="card-title">
+            <span>Points & Cashout Ledger</span>
+            <span class="pill pill-blue" id="ledgerCountPill">0 entries</span>
+          </div>
+          <div id="ledgerContainer"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Anti-Abuse & Cashout Guardrails (Prototype Rules)</span>
+            <span class="pill pill-amber">Safety</span>
+          </div>
+          <ul class="guardrail-list">
+            <li><strong>Course Matching:</strong> Nakikita at nasasagutan ang requests ng mga estudyanteng may parehong course kahit magkakaibang school.</li>
+            <li><strong>Self-Help & Duplicate Reward Lock:</strong> Hindi puwedeng i-accept ang sariling sagot para mag-farm ng points, at isang sagot lang bawat post ang puwedeng bigyan ng +20 pts confirmation.</li>
+            <li><strong>Minimum Cashout Threshold:</strong> Kailangan ng hindi bababa sa <strong>100 points</strong> (₱50.00 equivalent sa demo rate) bago makapag-request ng cashout.</li>
+            <li><strong>Production Note:</strong> Sa totoong deployment, dapat ilipat ang points ledger, school ID verification, at payout processing sa secure backend server at database.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const CONVERSION_RATE_PHP = 0.5; // Demo rate: 1 pt = ₱0.50
+    const MIN_CASHOUT_PTS = 100;
+
+    const state = {
+      currentUserId: "u1",
+      users: [
+        {
+          id: "u1",
+          name: "Miguel Santos",
+          schoolId: "2026-2027-10421",
+          course: "BS Civil Engineering",
+          school: "De La Salle University",
+          points: 35
+        },
+        {
+          id: "u2",
+          name: "Hannah Mae Reyes",
+          schoolId: "2026-2027-20889",
+          course: "BS Civil Engineering",
+          school: "University of Santo Tomas",
+          points: 110
+        },
+        {
+          id: "u3",
+          name: "Paolo Villanueva",
+          schoolId: "2026-2027-30114",
+          course: "BS Computer Science",
+          school: "UP Diliman",
+          points: 60
+        }
+      ],
+      posts: [
+        {
+          id: "p1",
+          authorId: "u1",
+          course: "BS Civil Engineering",
+          title: "Paano i-verify ang moment diagram sa cantilever beam na may point load sa dulo?",
+          body: "Nalilito ako sa sign convention kapag kinukuha ang internal moment sa distance x mula sa free end. Puwede bang may magpakita ng mabilis na step-by-step?",
+          createdAt: "Kanina lang",
+          rewardedAnswerId: null,
+          answers: [
+            {
+              id: "a1",
+              helperId: "u2",
+              text: "Kung mula sa free end ka mag-cut at pababa ang point load P sa dulo, M(x) = -P·x kung sagging = +; mas madaling i-check sa support kung saan pinakamalaki ang magnitude.",
+              createdAt: "5 mins ago"
+            }
+          ]
+        },
+        {
+          id: "p2",
+          authorId: "u3",
+          course: "BS Computer Science",
+          title: "Bakit nag-iiba ang query plan kapag may JOIN sa malaking table?",
+          body: "Gumagamit ako ng index sa foreign key pero minsan sequential scan pa rin ang lumalabas. Ano ang karaniwang dahilan?",
+          createdAt: "20 mins ago",
+          rewardedAnswerId: null,
+          answers: []
+        }
+      ],
+      ledger: [
+        { id: "l1", userId: "u1", delta: +5, label: "Nag-post ng help request (p1)", time: "Kanina lang" },
+        { id: "l2", userId: "u2", delta: +110, label: "Initial peer-help balance", time: "Kahapon" },
+        { id: "l3", userId: "u3", delta: +5, label: "Nag-post ng help request (p2)", time: "20 mins ago" }
+      ]
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function getUser(id) {
+      return state.users.find((u) => u.id === id);
+    }
+
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = message;
+      $("toastWrap").appendChild(toast);
+      setTimeout(() => toast.remove(), 3600);
+    }
+
+    function addLedger(userId, delta, label) {
+      const user = getUser(userId);
+      if (!user) return;
+      user.points = Math.max(0, user.points + delta);
+      state.ledger.unshift({
+        id: "l_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6),
+        userId,
+        delta,
+        label,
+        time: "Ngayon lang"
+      });
+    }
+
+    function renderSwitcher() {
+      const select = $("activeUserSelect");
+      select.innerHTML = state.users
+        .map(
+          (u) =>
+            `<option value="${u.id}" ${u.id === state.currentUserId ? "selected" : ""}>
+              ${u.name} — ${u.course} (${u.school})
+            </option>`
+        )
+        .join("");
+    }
+
+    function renderProfile() {
+      const user = getUser(state.currentUserId);
+      $("profileCourseBadge").textContent = user.course;
+      $("profileMeta").innerHTML = `
+        <div><span>Pangalan:</span> <strong>${escapeHtml(user.name)}</strong></div>
+        <div><span>School ID:</span> <strong>${escapeHtml(user.schoolId)}</strong></div>
+        <div><span>School:</span> <strong>${escapeHtml(user.school)}</strong></div>
+      `;
+      $("statPoints").textContent = `${user.points} pts`;
+      $("statPhpValue").textContent = `≈ ₱${(user.points * CONVERSION_RATE_PHP).toFixed(2)}`;
+    }
+
+    function renderFeed() {
+      const me = getUser(state.currentUserId);
+      const filterMode = $("filterCourse").value;
+      const keyword = $("searchKeyword").value.trim().toLowerCase();
+
+      const filtered = state.posts.filter((post) => {
+        const courseOk =
+          filterMode === "ALL"
+            ? true
+            : filterMode === "MY_COURSE"
+            ? post.course === me.course
+            : post.course === filterMode;
+
+        const text = `${post.title} ${post.body} ${post.course}`.toLowerCase();
+        const kwOk = !keyword || text.includes(keyword);
+        return courseOk && kwOk;
+      });
+
+      $("matchingCountPill").textContent = `${filtered.length} post(s)`;
+
+      if (!filtered.length) {
+        $("postsContainer").innerHTML = `<p class="muted">Walang tumugmang help request sa filter na ito. Subukang palitan ang course filter o mag-post ng bagong request.</p>`;
+        return;
+      }
+
+      $("postsContainer").innerHTML = filtered
+        .map((post) => {
+          const author = getUser(post.authorId);
+          const isOwner = post.authorId === me.id;
+          const canAnswer = post.course === me.course && !isOwner;
+
+          const answersHtml = post.answers
+            .map((ans) => {
+              const helper = getUser(ans.helperId);
+              const isAccepted = post.rewardedAnswerId === ans.id;
+              const canConfirm = isOwner && !post.rewardedAnswerId && ans.helperId !== me.id;
+
+              return `
+                <div class="answer-item ${isAccepted ? "accepted" : ""}">
+                  <div class="answer-top">
+                    <div>
+                      <strong>${escapeHtml(helper.name)}</strong>
+                      <span class="muted">(${escapeHtml(helper.school)} • ${escapeHtml(helper.schoolId)})</span>
+                    </div>
+                    <div>
+                      ${
+                        isAccepted
+                          ? `<span class="pill pill-green">Confirmed • +20 pts Awarded</span>`
+                          : `<span class="muted">${ans.createdAt}</span>`
+                      }
+                    </div>
+                  </div>
+                  <div class="answer-text">${escapeHtml(ans.text)}</div>
+                  ${
+                    canConfirm
+                      ? `<button class="btn btn-success btn-sm" onclick="confirmAnswer('${post.id}', '${ans.id}')">I-confirm ang Tulong (+20 pts sa Tutulong)</button>`
+                      : ""
+                  }
+                </div>
+              `;
+            })
+            .join("");
+
+          return `
+            <article class="post-card">
+              <div class="post-header">
+                <div>
+                  <div class="post-author">${escapeHtml(author.name)} ${
+                    isOwner ? `<span class="pill pill-blue">Ikaw</span>` : ""
+                  }</div>
+                  <div class="post-meta">${escapeHtml(author.school)} • ID: ${escapeHtml(author.schoolId)} • ${post.createdAt}</div>
+                </div>
+                <span class="pill pill-blue">${escapeHtml(post.course)}</span>
+              </div>
+
+              <div class="post-title">${escapeHtml(post.title)}</div>
+              <div class="post-body">${escapeHtml(post.body)}</div>
+
+              <div class="answers-box">
+                <div style="font-size:12px; font-weight:700; margin-bottom:8px;">
+                  Mga Sagot / Tulong (${post.answers.length})
+                </div>
+                ${answersHtml || `<div class="muted" style="margin-bottom:8px;">Wala pang sagot. Magbigay ng malinaw na tulong para makakuha ng +20 pts kapag na-confirm.</div>`}
+
+                ${
+                  canAnswer
+                    ? `
+                      <form onsubmit="submitAnswer(event, '${post.id}')" style="margin-top:10px; display:grid; gap:8px;">
+                        <textarea rows="2" required placeholder="Isulat ang iyong tulong o paliwanag para kay ${escapeHtml(author.name)}..."></textarea>
+                        <div>
+                          <button type="submit" class="btn btn-primary btn-sm">Magbigay ng Tulong</button>
+                        </div>
+                      </form>
+                    `
+                    : isOwner
+                    ? `<div class="muted" style="margin-top:8px;">Ikaw ang nag-post nito (+5 pts na ang na-credit sa iyo). I-confirm ang pinakamakatulong na sagot sa ibaba.</div>`
+                    : `<div class="muted" style="margin-top:8px;">Lumipat sa account na kapareho ang course (<strong>${escapeHtml(post.course)}</strong>) para sumagot.</div>`
+                }
+              </div>
+            </article>
+          `;
+        })
+        .join("");
+    }
+
+    function renderLedger() {
+      const me = getUser(state.currentUserId);
+      const myEntries = state.ledger.filter((item) => item.userId === me.id);
+      $("ledgerCountPill").textContent = `${myEntries.length} entry(s)`;
+
+      if (!myEntries.length) {
+        $("ledgerContainer").innerHTML = `<p class="muted">Wala pang points activity para sa account na ito.</p>`;
+        return;
+      }
+
+      $("ledgerContainer").innerHTML = myEntries
+        .map(
+          (item) => `
+            <div class="ledger-item">
+              <div>
+                <div><strong>${escapeHtml(item.label)}</strong></div>
+                <div class="muted">${item.time}</div>
+              </div>
+              <div class="${item.delta >= 0 ? "pts-plus" : "pts-minus"}">
+                ${item.delta >= 0 ? "+" : ""}${item.delta} pts
+              </div>
+            </div>
+          `
+        )
+        .join("");
+    }
+
+    function renderAll() {
+      renderSwitcher();
+      renderProfile();
+      renderFeed();
+      renderLedger();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    window.submitAnswer = function (event, postId) {
+      event.preventDefault();
+      const me = getUser(state.currentUserId);
+      const post = state.posts.find((p) => p.id === postId);
+      if (!post || post.authorId === me.id || post.course !== me.course) return;
+
+      const textarea = event.target.querySelector("textarea");
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      post.answers.push({
+        id: "a_" + Date.now(),
+        helperId: me.id,
+        text,
+        createdAt: "Ngayon lang"
+      });
+
+      textarea.value = "";
+      showToast("Naipadala ang sagot! Maghihintay ito ng confirmation mula sa nagpatulong (+20 pts).");
+      renderFeed();
+    };
+
+    window.confirmAnswer = function (postId, answerId) {
+      const me = getUser(state.currentUserId);
+      const post = state.posts.find((p) => p.id === postId);
+      if (!post || post.authorId !== me.id || post.rewardedAnswerId) return;
+
+      const ans = post.answers.find((a) => a.id === answerId);
+      if (!ans || ans.helperId === me.id) return;
+
+      post.rewardedAnswerId = ans.id;
+      const helper = getUser(ans.helperId);
+      addLedger(helper.id, +20, `Kinumpirmang tulong sa post: "${post.title.slice(0, 36)}..."`);
+
+      showToast(`Nakakuha ng +20 pts si ${helper.name} sa pagtulong!`);
+      renderAll();
+    };
+
+    $("activeUserSelect").addEventListener("change", (e) => {
+      state.currentUserId = e.target.value;
+      renderAll();
+    });
+
+    $("filterCourse").addEventListener("change", renderFeed);
+    $("searchKeyword").addEventListener("input", renderFeed);
+
+    $("registerForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = $("regName").value.trim();
+      const schoolId = $("regSchoolId").value.trim();
+      const course = $("regCourse").value;
+      const school = $("regSchool").value.trim();
+
+      if (!name || !schoolId || !course || !school) return;
+
+      const newUser = {
+        id: "u_" + Date.now(),
+        name,
+        schoolId,
+        course,
+        school,
+        points: 0
+      };
+
+      state.users.push(newUser);
+      state.currentUserId = newUser.id;
+      e.target.reset();
+      showToast(`Maligayang pagdating, ${name}! Naka-set ka na sa ${course}.`);
+      renderAll();
+    });
+
+    $("createPostForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const me = getUser(state.currentUserId);
+      const title = $("postTitle").value.trim();
+      const body = $("postBody").value.trim();
+      if (!title || !body) return;
+
+      const postId = "p_" + Date.now();
+      state.posts.unshift({
+        id: postId,
+        authorId: me.id,
+        course: me.course,
+        title,
+        body,
+        createdAt: "Ngayon lang",
+        rewardedAnswerId: null,
+        answers: []
+      });
+
+      addLedger(me.id, +5, `Nagpatulong sa ${me.course}: "${title.slice(0, 32)}..."`);
+      e.target.reset();
+      showToast("Na-post na ang request! Nadagdagan ka ng +5 pts.");
+
+      document.querySelector('.tab-btn[data-tab="feedTab"]').click();
+      renderAll();
+    });
+
+    $("cashoutBtn").addEventListener("click", () => {
+      const me = getUser(state.currentUserId);
+      const pts = parseInt($("cashoutPointsInput").value, 10);
+
+      if (Number.isNaN(pts) || pts < MIN_CASHOUT_PTS) {
+        showToast(`Minimum na cashout ay ${MIN_CASHOUT_PTS} points (₱${(MIN_CASHOUT_PTS * CONVERSION_RATE_PHP).toFixed(2)}).`);
+        return;
+      }
+
+      if (pts > me.points) {
+        showToast("Hindi sapat ang points balance mo para sa cashout request na ito.");
+        return;
+      }
+
+      const phpAmount = (pts * CONVERSION_RATE_PHP).toFixed(2);
+      addLedger(me.id, -pts, `Cashout request na ₱${phpAmount} (${pts} pts)`);
+      $("cashoutPointsInput").value = "";
+      showToast(`Demo Cashout submitted: ₱${phpAmount} (${pts} pts deducted).`);
+      renderAll();
+    });
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const target = btn.dataset.tab;
+        ["feedTab", "postTab", "walletTab"].forEach((tabId) => {
+          $(tabId).classList.toggle("hidden", tabId !== target);
+        });
+      });
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
